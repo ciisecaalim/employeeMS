@@ -1,0 +1,2 @@
+console.log(router.stack.map(function(layer) { return layer.route ? layer.route.path : layer.name; }));  
+console.log(router.stack.map(function(layer) { return layer.route ? layer.route.path : layer.name; }));  

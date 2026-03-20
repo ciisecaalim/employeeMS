@@ -1,20 +1,21 @@
- const express = require("express");
  const mongoose = require("mongoose");
- const cors = require("cors");
+ const express = require("express");
+ const cors = require("cors")
+ const emproter = require("./router/employee");
+const e = require("express");
+ 
+ const app = express()
 
- const emprouter = require("./router/employee")
+ app.use(cors())
+ app.use(express.json())
 
- const app = express();
+mongoose.connect("mongodb://localhost:27017/employeeEMP").then(() => {
+  console.log("database connected successfully!")
+})
 
- app.use(cors());
- app.use(express.json());
+app.use("/api/employee", emproter)
+ 
 
- mongoose.connect("mongodb://localhost:27017/employeeMS").then(() => {
-    console.log("succsessfully")
- })
-
- app.use("/employee", emprouter);
-
- app.listen(5000, () => {
-    console.log("connected")
- })
+app.listen(5000, () => {
+   console.log("server is running port 5000")
+})

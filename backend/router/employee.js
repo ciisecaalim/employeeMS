@@ -1,11 +1,27 @@
- const express = require("express");
+const express = require("express");
 
- const {createEmp} = require("../controller/employee")
- 
- const router = express.Router();
+const { createEMP, readAll, deleteEmp, readSingle, EmpUpdate } = require("../controller/employee");
 
- router.post("/", createEmp);
+const router = express.Router();
 
- module.exports = router;
+// CREATE
+router.post("/", createEMP);
 
 
+// READ SINGLE ✅
+router.get("/:id", readSingle);
+
+// READ ALL
+router.get("/", readAll);
+
+
+
+// update
+router.put("/", EmpUpdate);
+
+
+
+// DELETE
+router.delete("/:id", deleteEmp);
+
+module.exports = router;
