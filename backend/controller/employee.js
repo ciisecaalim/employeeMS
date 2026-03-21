@@ -95,8 +95,14 @@ const readAll = async (req, res) => {
 
 // ✅ DELETE
 const deleteEmp = async (req, res) => {
+  const employeeId = Number(req.params.id);
+
+  if (Number.isNaN(employeeId)) {
+    return res.status(400).json({ message: "Invalid employee id" });
+  }
+
   try {
-    const dl = await empcontroller.findByIdAndDelete(req.params.id);
+    const dl = await empcontroller.findOneAndDelete({ id: employeeId });
 
     if (!dl) {
       return res.status(404).json({
