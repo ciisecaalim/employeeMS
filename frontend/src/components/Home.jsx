@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
+import {useNavigate} from "react-router-dom"
 
 export default function Home() {
   const [Employee, setemployee] = useState([]);
@@ -11,6 +12,8 @@ export default function Home() {
     salary:""
   })
 
+
+  const navigate = useNavigate();
 
   const API = "http://localhost:5000/api/employee";
 
@@ -125,7 +128,7 @@ export default function Home() {
                 <td className="p-4">{emp.phone}</td>
                 <td className="p-4 text-green-600 font-semibold">${emp.salary}</td>
                 <td className="p-4 flex justify-center gap-2">
-                  <button className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-1 rounded-lg text-sm">
+                  <button onClick={() => navigate(`/update/${emp.id}`)} className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-1 rounded-lg text-sm">
                     Edit
                   </button>
                   <button onClick={() => deleteEmp(emp.id)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg text-sm">

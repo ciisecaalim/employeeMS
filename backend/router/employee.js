@@ -17,7 +17,7 @@ router.get("/", readAll);
 
 
 // update
-router.put("/", EmpUpdate);
+router.put("/:id", EmpUpdate);
 
 
 

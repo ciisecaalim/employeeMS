@@ -25,35 +25,33 @@ const readSingle = async (req, res) => {
 };
 
 
+const EmpUpdate = async (req, res) => {
+  try {
 
-//update
+    const updated = await empcontroller.findOneAndUpdate(
+      { id: Number(req.params.id) },   // ✅ muhiim
+      req.body,
+      { new: true }
+    );
 
-const EmpUpdate = async(req, res) => {
-    const updated = await empcontroller.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        {new: true}
-        
-    )
-
-    if(!updated){
-        res.status(404).json({
-            message: "not found! "
-            
-        })
-
-        res.status(200).json({
-            message: "successfully",
-            data: updated
-        })
-
-        res.status(500).json({
-            message: "error",
-            error : error.message
-        })
+    if (!updated) {
+      return res.status(404).json({
+        message: "Employee not found"
+      });
     }
-}
 
+    res.status(200).json({
+      message: "Updated successfully",
+      data: updated
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message
+    });
+  }
+};
 
 
 // ✅ CREATE
