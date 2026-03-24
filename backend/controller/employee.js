@@ -2,8 +2,14 @@ const empcontroller = require("../model/employee");
 
 // ✅ READ SINGLE
 const readSingle = async (req, res) => {
+  const employeeId = Number(req.params.id);
+
+  if (Number.isNaN(employeeId)) {
+    return res.status(400).json({ message: "Invalid employee id" });
+  }
+
   try {
-    const reads = await empcontroller.findById(req.params.id);
+    const reads = await empcontroller.findOne({ id: employeeId });
 
     if (!reads) {
       return res.status(404).json({

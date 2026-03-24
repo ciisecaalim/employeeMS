@@ -121,17 +121,17 @@ export default function Home() {
 
             <tbody className="divide-y">
 
-             {Employee.map((emp, index) => (
-               <tr key={index} className="hover:bg-gray-50 transition">
+             {Employee.map((emp) => (
+               <tr key={emp._id} className="hover:bg-gray-50 transition">
                 <td className="p-4">{emp.id}</td>
                 <td className="p-4 font-medium">{emp.name}</td>
                 <td className="p-4">{emp.phone}</td>
                 <td className="p-4 text-green-600 font-semibold">${emp.salary}</td>
                 <td className="p-4 flex justify-center gap-2">
-                  <button onClick={() => navigate(`/update/${emp.id}`)} className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-1 rounded-lg text-sm">
+                  <button onClick={() => navigate(`/update/${emp._id}`)} className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-1 rounded-lg text-sm">
                     Edit
                   </button>
-                  <button onClick={() => deleteEmp(emp.id)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg text-sm">
+                  <button onClick={() => deleteEmp(emp._id)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg text-sm">
                     Delete
                   </button>
                 </td>
