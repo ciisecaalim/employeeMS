@@ -6,13 +6,16 @@ export default function UpdateEmployee() {
   const {id} = useParams();
   const navigate = useNavigate();
 
+  const isValidRouteId = id && id !== "null" && id !== "undefined";
+
   const API = "http://localhost:5000/api/employee";
 
   const [form, setForm] = useState({
     id:"",
     name:"",
     phone:"",
-    salary:""
+    salary:"",
+    Image: ""
   })
 
 
@@ -27,7 +30,8 @@ export default function UpdateEmployee() {
           id: Emp.id,
           name: Emp.name,
           phone: Emp.phone,
-          salary: Emp.salary
+          salary: Emp.salary,
+          Image: Emp.Image || ""
         })
       }
     } catch (error) {
@@ -37,10 +41,13 @@ export default function UpdateEmployee() {
 
 
   useEffect(() => {
-    if (id) {
+    if (isValidRouteId) {
       single()
+      return;
     }
-  }, [id])
+
+    navigate("/")
+  }, [id, isValidRouteId, navigate])
 
 
   //handling
@@ -54,7 +61,21 @@ export default function UpdateEmployee() {
   //update
 
   const updateEmp = async () => {
-    await axios.put(`${API}/${id}`, form)
+    if (!isValidRouteId) {
+      return;
+    }
+
+    const data = new FormData();
+    data.append("id", form.id);
+    data.append("name", form.name);
+    data.append("phone", form.phone);
+    data.append("salary", form.salary);
+
+    if (form.newImage) {
+      data.append("Image", form.newImage);
+    }
+
+    await axios.put(`${API}/${id}`, data)
     navigate("/")
   }
 
@@ -108,6 +129,26 @@ export default function UpdateEmployee() {
            value={form.salary}
             className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none"
           />
+
+          <input
+            type="file"
+            name='Image'
+            onChange={(e) =>
+              setForm({
+                ...form,
+                newImage: e.target.files[0]
+              })
+            }
+            className="w-full border p-3 rounded-xl"
+          />
+
+          {form.Image && (
+            <img
+              src={`http://localhost:5000/images/${form.Image}`}
+              alt={form.name}
+              className="w-20 h-20 rounded-lg object-cover border"
+            />
+          )}
 
         </div>
 

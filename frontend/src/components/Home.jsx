@@ -9,7 +9,8 @@ export default function Home() {
     id:"",
     name: "",
     phone:"",
-    salary:""
+    salary:"",
+    Image: ""
   })
 
 
@@ -40,20 +41,38 @@ export default function Home() {
   }
 
   //create
+const create = async () => {
+  const data = new FormData();
 
-  const create = async ()=>{
-    await axios.post(API, form)
-    readEmployee();
-    setForm({id:"", name:"", phone:"", salary:""})
-  }
+  data.append("id", form.id);
+  data.append("name", form.name);
+  data.append("phone", form.phone);
+  data.append("salary", form.salary);
+  data.append("Image", form.Image);
+
+  await axios.post(API, data);
+
+  readEmployee();
+  setForm({ id: "", name: "", phone: "", salary: "", Image: "" });
+};
 
 
   // delete
 
   const deleteEmp = async (id) => {
+    if (id === null || id === undefined || id === "" || id === "null" || id === "undefined") {
+      return;
+    }
     await axios.delete(`${API}/${id}`)
     readEmployee();
 
+  }
+
+  const getEmployeeRouteId = (emp) => {
+    if (emp?.id !== null && emp?.id !== undefined && emp.id !== "") {
+      return emp.id;
+    }
+    return emp?._id || null;
   }
 
   return (
@@ -76,6 +95,15 @@ export default function Home() {
               onChange={handle}
             className="border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none"
           />
+<input
+  type="file"
+  name="Image"
+  onChange={(e) =>
+    setForm({ ...form, Image: e.target.files[0] })
+  }
+  className="border p-3 rounded-xl"
+/>
+
           <input
             type="text"
             placeholder="Full Name"
@@ -104,6 +132,8 @@ export default function Home() {
           <button onClick={create} className="col-span-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl font-semibold shadow-md hover:scale-[1.02] transition">
             Add Employee
           </button>
+
+          
         </div>
 
         {/* Table */}
@@ -112,6 +142,7 @@ export default function Home() {
             <thead className="bg-blue-500 text-white">
               <tr>
                 <th className="p-4">ID</th>
+                <th className="p-4">img</th>
                 <th className="p-4">Name</th>
                 <th className="p-4">Phone</th>
                 <th className="p-4">Salary</th>
@@ -121,22 +152,43 @@ export default function Home() {
 
             <tbody className="divide-y">
 
-             {Employee.map((emp) => (
-               <tr key={emp._id} className="hover:bg-gray-50 transition">
-                <td className="p-4">{emp.id}</td>
+             {Employee.map((emp) => {
+               const routeId = getEmployeeRouteId(emp);
+               return (
+               <tr key={emp._id || routeId} className="hover:bg-gray-50 transition">
+                <td className="p-4">
+                  <button
+                    onClick={() => routeId && navigate(`/update/${routeId}`)}
+                    className="text-blue-600 hover:underline"
+                  >
+                    {emp.id}
+                  </button>
+                </td>
+                <td className="w-10 h-20 p-3">
+                  {emp.Image ? (
+                    <img
+                      src={`http://localhost:5000/images/${emp.Image}`}
+                      alt={emp.name}
+                      className="w-14 h-14 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <span className="text-gray-400 text-sm">No image</span>
+                  )}
+                </td>
                 <td className="p-4 font-medium">{emp.name}</td>
                 <td className="p-4">{emp.phone}</td>
                 <td className="p-4 text-green-600 font-semibold">${emp.salary}</td>
                 <td className="p-4 flex justify-center gap-2">
-                  <button onClick={() => navigate(`/update/${emp._id}`)} className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-1 rounded-lg text-sm">
+                  <button onClick={() => routeId && navigate(`/update/${routeId}`)} className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-1 rounded-lg text-sm">
                     Edit
                   </button>
-                  <button onClick={() => deleteEmp(emp._id)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg text-sm">
+                  <button onClick={() => deleteEmp(routeId)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg text-sm">
                     Delete
                   </button>
                 </td>
               </tr>
-             ))}
+               );
+             })}
 
             </tbody>
           </table>

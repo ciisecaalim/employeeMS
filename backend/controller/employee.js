@@ -1,15 +1,37 @@
 const empcontroller = require("../model/employee");
+const mongoose = require("mongoose");
+
+const buildEmployeeQuery = (paramId) => {
+  if (paramId === undefined || paramId === null) {
+    return null;
+  }
+
+  const idAsString = String(paramId).trim();
+  if (!idAsString || idAsString === "null" || idAsString === "undefined") {
+    return null;
+  }
+
+  if (/^\d+$/.test(idAsString)) {
+    return { id: Number(idAsString) };
+  }
+
+  if (mongoose.Types.ObjectId.isValid(idAsString)) {
+    return { _id: idAsString };
+  }
+
+  return null;
+};
 
 // ✅ READ SINGLE
 const readSingle = async (req, res) => {
-  const employeeId = Number(req.params.id);
+  const query = buildEmployeeQuery(req.params.id);
 
-  if (Number.isNaN(employeeId)) {
+  if (!query) {
     return res.status(400).json({ message: "Invalid employee id" });
   }
 
   try {
-    const reads = await empcontroller.findOne({ id: employeeId });
+    const reads = await empcontroller.findOne(query);
 
     if (!reads) {
       return res.status(404).json({
@@ -31,12 +53,27 @@ const readSingle = async (req, res) => {
 };
 
 
+//update
+
 const EmpUpdate = async (req, res) => {
   try {
+    const query = buildEmployeeQuery(req.params.id);
+
+    if (!query) {
+      return res.status(400).json({ message: "Invalid employee id" });
+    }
+
+    let updateData = {
+      ...req.body
+    };
+
+    if (req.file) {
+      updateData.Image = req.file.filename;
+    }
 
     const updated = await empcontroller.findOneAndUpdate(
-      { id: Number(req.params.id) },   // ✅ muhiim
-      req.body,
+      query,
+      updateData,
       { new: true }
     );
 
@@ -59,11 +96,13 @@ const EmpUpdate = async (req, res) => {
   }
 };
 
-
 // ✅ CREATE
 const createEMP = async (req, res) => {
   try {
-    const newdata = new empcontroller(req.body);
+    const newdata = new empcontroller({
+      ...req.body,
+        Image: req.file ? req.file.filename : ""
+    });
     const savedata = await newdata.save();
 
     res.status(200).json({
@@ -99,14 +138,14 @@ const readAll = async (req, res) => {
 
 // ✅ DELETE
 const deleteEmp = async (req, res) => {
-  const employeeId = Number(req.params.id);
+  const query = buildEmployeeQuery(req.params.id);
 
-  if (Number.isNaN(employeeId)) {
+  if (!query) {
     return res.status(400).json({ message: "Invalid employee id" });
   }
 
   try {
-    const dl = await empcontroller.findOneAndDelete({ id: employeeId });
+    const dl = await empcontroller.findOneAndDelete(query);
 
     if (!dl) {
       return res.status(404).json({

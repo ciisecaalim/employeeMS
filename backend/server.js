@@ -15,6 +15,7 @@ mongoose.connect("mongodb://localhost:27017/employeeEMP").then(() => {
 
 app.use("/api/employee", emproter)
  
+app.use("/images", express.static("images"))
 
 app.listen(5000, () => {
    console.log("server is running port 5000")

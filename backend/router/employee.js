@@ -2,10 +2,12 @@ const express = require("express");
 
 const { createEMP, readAll, deleteEmp, readSingle, EmpUpdate } = require("../controller/employee");
 
+const uploadImage = require("../middleware/upload")
+
 const router = express.Router();
 
 // CREATE
-router.post("/", createEMP);
+router.post("/", uploadImage.single("Image"), createEMP);
 
 
 // READ SINGLE ✅
@@ -17,7 +19,7 @@ router.get("/", readAll);
 
 
 // update
-router.put("/:id", EmpUpdate);
+router.put("/:id", uploadImage.single("Image"), EmpUpdate);
 
 
 
